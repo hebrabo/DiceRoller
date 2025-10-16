@@ -14,9 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.diceroller.ui.theme.DiceRollerTheme
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,10 +37,9 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun DiceWithButtonAndImage(modifier: Modifier = Modifier
-        .fillMaxSize()
-        .wrapContentSize(Alignment.Center)
-    ) {
+    fun DiceWithButtonAndImage(modifier: Modifier = Modifier)
+
+     {
         var result by remember { mutableStateOf(1) }
         val imageResource = when (result) {
             1 -> R.drawable.dice_1
@@ -48,19 +50,49 @@ class MainActivity : ComponentActivity() {
             else -> R.drawable.dice_6
         }
         Column (
-            modifier = modifier,
+            modifier = modifier
+            .fillMaxSize()
+            .wrapContentSize(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Dos columnas (una por dado) dentro de una fila
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                // Primer dado + botón
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(imageResource),
-                contentDescription = result.toString()
+                contentDescription = result.toString(),
+                modifier = Modifier.size(120.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { result = (1..6).random() }) {
+            Button(onClick = {
+                result = (1..6).random()
+            }) {
                 Text(stringResource(R.string.roll))
+            }
+            }
+                // Segundo dado + botón
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = painterResource(imageResource),
+                        contentDescription = result.toString(),
+                        modifier = Modifier.size(120.dp)
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = {
+                        result = (1..6).random()
+                    }) {
+                        Text(stringResource(R.string.roll))
+                    }
+                }
             }
         }
     }
+
+
 
     @Preview
     @Composable
