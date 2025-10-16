@@ -40,8 +40,13 @@ class MainActivity : ComponentActivity() {
     fun DiceWithButtonAndImage(modifier: Modifier = Modifier)
 
      {
-        var result by remember { mutableStateOf(1) }
-        val imageResource = when (result) {
+        // Estados de los dados
+        var result1 by remember { mutableStateOf(1) }
+         var result2 by remember { mutableStateOf(0) }
+         var total by remember { mutableStateOf(result1 + result2) }
+
+         // Recursos de imagen
+        val imageResource1 = when (result1) {
             1 -> R.drawable.dice_1
             2 -> R.drawable.dice_2
             3 -> R.drawable.dice_3
@@ -49,6 +54,15 @@ class MainActivity : ComponentActivity() {
             5 -> R.drawable.dice_5
             else -> R.drawable.dice_6
         }
+
+         val imageResource2 = when (result2) {
+             1 -> R.drawable.dice_1
+             2 -> R.drawable.dice_2
+             3 -> R.drawable.dice_3
+             4 -> R.drawable.dice_4
+             5 -> R.drawable.dice_5
+             else -> R.drawable.dice_6
+         }
         Column (
             modifier = modifier
             .fillMaxSize()
@@ -63,32 +77,43 @@ class MainActivity : ComponentActivity() {
                 // Primer dado + botón
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
-                painter = painterResource(imageResource),
-                contentDescription = result.toString(),
+                painter = painterResource(imageResource1),
+                contentDescription = result1.toString(),
                 modifier = Modifier.size(120.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(onClick = {
-                result = (1..6).random()
+                result1 = (1..6).random()
+                result2 = 0 // “ocultar” segundo dado
+                total = result1
             }) {
                 Text(stringResource(R.string.roll))
             }
             }
                 // Segundo dado + botón
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        painter = painterResource(imageResource),
-                        contentDescription = result.toString(),
-                        modifier = Modifier.size(120.dp)
-                    )
+                    if (result2 == 0) {
+                        Spacer(modifier = Modifier.size(120.dp))
+                    } else {
+                        Image(
+                            painter = painterResource(imageResource2),
+                            contentDescription = result2.toString(),
+                            modifier = Modifier.size(120.dp)
+                        )
+                    }
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = {
-                        result = (1..6).random()
+                        result1 = (1..6).random()
+                        result2 = (1..6).random()
+                        total = result1 + result2
                     }) {
                         Text(stringResource(R.string.roll))
                     }
                 }
             }
+
+            Spacer(modifier = Modifier.height(24.dp))
+            Text(text = "Puntuación: $total")
         }
     }
 
